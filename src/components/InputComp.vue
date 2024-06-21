@@ -1,10 +1,10 @@
 <script setup>
-    const props = defineProps(['changeAmount']);
+    const props = defineProps(['changeAmount', 'convert', 'setError']);
 </script>
 
 <template>
-    <input v-model="input" id="input" type="text" @input="inputCheck($event.target.value)" autocomplete="off">
-    <label class="error" v-show="inputCheckValue" for="input">You can input only numbers</label>
+    <input v-model="input" type="text" @input="inputCheck($event.target.value)" autocomplete="off">
+    <button @click="convert">convert</button>
 </template>
 
 <script>
@@ -12,15 +12,15 @@
 export default {
     data() {
         return {
-            inputCheckValue: false,
+
         }
     },
     methods: {
         inputCheck(input) {
             if (!/^\d+$/.test(input) && input.length !== 0) {
-                this.inputCheckValue = true;
+                this.setError('You can input only numbers');
             } else {
-                this.inputCheckValue = false;
+                this.setError('');
                 this.changeAmount(input);
             }
         }
@@ -31,22 +31,27 @@ export default {
 
 <style scoped>
     input {
+        width: 100%;
         border-radius: 5px;
         border: none;
-        min-height: 30px;
+        height: 30px;
         background-color: #d7f5ff;
         outline: none;
-        padding: 5px 10px;
         font-size: 1rem;
+        padding: 5px 10px;
     }
-    .error {
-        color: red;
+    .input-wrapper {
+        width: 100%;
+        position: relative;
     }
     button {
-        width: 100px;
-        height: 50px;
+        width: 100%;
+        height: 40px;
         text-transform: uppercase;
         border: none;
         border-radius: 5px;
+        background-color: #6eb8f9;
+        cursor: pointer;
+        padding: 5px 10px;
     }
 </style>
