@@ -1,4 +1,6 @@
 <script setup>
+    import axios from 'axios';
+    import FavouriteComp from './components/FavouriteComp.vue';
     import InputComp from './components/InputComp.vue';
     import SelectComp from './components/SelectComp.vue';
 </script>
@@ -7,13 +9,17 @@
     <main>
         <h1>crypto</h1>
         <div class="inputs">
-            <InputComp :changeAmount="changeAmount" :convert="convert" :setError="setError"/>
+            <InputComp :changeAmount="changeAmount" :convert="convert" :setError="setError" :favourite="favourite"/>
             <div class="error">{{ error }}</div>
             <div class="output">{{ output }}</div>
+            <button @click="favourite">favourite</button>
         </div>
         <div class="selects">
-            <SelectComp :setCrypto="setCryptoFirst" />
-            <SelectComp :setCrypto="setCryptoSecond" />
+            <SelectComp :setCrypto="setCryptoFirst" :crypto="cryptoFirst" />
+            <SelectComp :setCrypto="setCryptoSecond" :crypto="cryptoSecond" />
+        </div>
+        <div class="favourite">
+            <FavouriteComp v-if="favs.length > 0" :favourite="favourite" :favs="favs" :getFromFav="getFromFav" />
         </div>
     </main>
 </template>
@@ -27,6 +33,7 @@
                 cryptoSecond: '',
                 error: '',
                 output: '',
+                favs: [],
             }
         },
         methods: {
@@ -48,12 +55,42 @@
                 } else if (this.cryptoFirst == this.cryptoSecond) {
                     this.setError('Select different cryptos');
                     return;
+                } else {
+                    axios.get(`https://api.coinconvert.net/convert/${this.cryptoFirst}/${this.cryptoSecond}?amount=${this.amount}`).then(
+                        value => {
+                            this.output = +value['data'][(this.cryptoSecond)].toFixed(4);
+                            this.setError('');
+                        },
+                        error => {
+                            this.setError('Network error');
+                        }
+                    )
                 }
-                this.output = this.amount;
             },
             setError(val) {
                 this.error = val;
+            },
+            favourite() {
+                if (this.cryptoFirst == '' || this.cryptoSecond == '') {
+                    this.setError('Select cryptos');
+                    return;
+                } else if (this.cryptoFirst == this.cryptoSecond) {
+                    this.setError('Select different cryptos');
+                    return;
+                } else {
+                    this.favs.push({
+                        from: this.cryptoFirst, 
+                        to: this.cryptoSecond,
+                    });
+                }
+            },
+            getFromFav(index) {
+                this.cryptoFirst = this.favs[index]['from'];
+                this.cryptoSecond = this.favs[index]['to'];
             }
+        },
+        computed: {
+
         }
     }
 
@@ -102,4 +139,19 @@
         display: flex;
         align-items: center;
     }
+    .favourite {
+        display: flex;
+        gap: 20px;
+    }
+    button {
+        width: 100%;
+        height: 40px;
+        text-transform: uppercase;
+        border: none;
+        border-radius: 5px;
+        background-color: #f0f8aa;
+        cursor: pointer;
+        padding: 5px 10px;
+    }
 </style>
+

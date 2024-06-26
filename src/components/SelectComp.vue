@@ -1,12 +1,12 @@
 <script setup>
-const props = defineProps(['setCrypto']);
+const props = defineProps(['setCrypto', 'crypto']);
 </script>
 
 <template>
   <ul>
-    <li @click="selectItem('Bitcoin')" :class="(current == 'Bitcoin') ? 'active': ''">Bitcoin</li>
-    <li @click="selectItem('ETH')" :class="(current == 'ETH') ? 'active': ''">ETH</li>
-    <li @click="selectItem('USDT')" :class="(current == 'USDT') ? 'active': ''">USDT</li>
+    <li @click="setCrypto('BTC')" :class="(crypto == 'BTC') ? 'active' : ''">BTC</li>
+    <li @click="setCrypto('ETH')" :class="(crypto == 'ETH') ? 'active' : ''">ETH</li>
+    <li @click="setCrypto('USDT')" :class="(crypto == 'USDT') ? 'active' : ''">USDT</li>
   </ul>
 </template>
 
@@ -15,14 +15,11 @@ const props = defineProps(['setCrypto']);
 export default {
     data() {
         return {
-            current: '',
+            
         }
     },
     methods: {
-        selectItem(val) {
-            this.setCrypto(val);
-            this.current = val;
-        },
+
     },
 }
 
