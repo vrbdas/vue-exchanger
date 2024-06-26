@@ -71,22 +71,30 @@
                 this.error = val;
             },
             favourite() {
+                // создаю новую элемент для добавления в избранное
+                const newFav = {
+                        from: this.cryptoFirst, 
+                        to: this.cryptoSecond,
+                    };
                 if (this.cryptoFirst == '' || this.cryptoSecond == '') {
                     this.setError('Select cryptos');
                     return;
                 } else if (this.cryptoFirst == this.cryptoSecond) {
                     this.setError('Select different cryptos');
                     return;
+                } else if (this.favs.some(element => JSON.stringify(element) === JSON.stringify(newFav))){
+                    // проверка, что такой пары еще нет в избранном: метод some() проверяет, удовлетворяет ли какой-либо element массива условию, заданному в функции, JSON.stringify преобразует объект в JSON-строку
+                    this.setError('Pair already exists');
+                    return;
                 } else {
-                    this.favs.push({
-                        from: this.cryptoFirst, 
-                        to: this.cryptoSecond,
-                    });
+                    this.favs.push(newFav);
+                    this.setError('');
                 }
             },
             getFromFav(index) {
                 this.cryptoFirst = this.favs[index]['from'];
                 this.cryptoSecond = this.favs[index]['to'];
+                this.setError('');
             }
         },
         computed: {
